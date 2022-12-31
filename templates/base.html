@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="zxx">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Male_Fashion Template">
+    <meta name="keywords" content="Male_Fashion, unica, creative, html">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Khadi-Fashion</title>
+
+    <link rel="shortcut icon" href="{% static 'admins/images/favicon.ico' %}" />
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap"
+        rel="stylesheet">
+
+    <!-- Css Styles -->
+    <link rel="stylesheet" href="{% static 'store/css/bootstrap.min.css'%}" type="text/css">
+    <link rel="stylesheet" href="{% static 'store/css/font-awesome.min.css'%}" type="text/css">
+    <link rel="stylesheet" href="{% static 'store/css/elegant-icons.css'%}" type="text/css">
+    <!-- <link rel="stylesheet" href="{% static 'store/css/magnific-popup.csss'%}" type="text/css"> -->
+    <link rel="stylesheet" href="{% static 'store/css/nice-select.css'%}" type="text/css">
+    <link rel="stylesheet" href="{% static 'store/css/owl.carousel.min.css'%}" type="text/css">
+    <link rel="stylesheet" href="{% static 'store/css/slicknav.min.css'%}" type="text/css">
+    <link rel="stylesheet" href="{% static 'store/css/style.css'%}" type="text/css">
+    <link rel="stylesheet" type="text/css" href="{% static 'store/css/magnific-popup.css'%}">
+    <!-- alertify  -->
+    <!-- CSS -->
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css" />
+    <!-- Default theme -->
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/default.min.css" />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/regular.min.css"
+        integrity="sha512-aNH2ILn88yXgp/1dcFPt2/EkSNc03f9HBFX0rqX3Kw37+vjipi1pK3L9W08TZLhMg4Slk810sPLdJlNIjwygFw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+
+    {% include 'includes/navbar.html' %}
+    <main class="mb-5">
+        {% block content %}
+        {% comment %} content {% endcomment %}
+        {% endblock content %}
+    </main>
+
+    {% include 'includes/footer.html' %}

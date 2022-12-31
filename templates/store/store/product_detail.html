@@ -1,0 +1,233 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+{% block css %}
+<link href="{% static 'css/ui.css' %}" rel="stylesheet" type="text/css" />
+
+<style>
+    #img-container div {
+        z-index: 100;
+    }
+
+    ul.thumb {
+        margin: 0 auto;
+        padding: 0;
+        float: left;
+    }
+
+    ul.thumb li {
+        list-style: none;
+        margin: 10px;
+    }
+
+    ul.thumb li img {
+        width: 80px;
+        height: 80px;
+        border: 1px solid gray;
+    }
+</style>
+<link href="{% static 'css/style.css' %}" rel="stylesheet" type="text/css" />
+<link href="{% static 'css/responsive.css' %}" rel="stylesheet" media="only screen and (max-width: 1200px)" />
+
+{% endblock css %}
+<script src="{% static 'js/jquery-2.0.0.min.js' %}" type="text/javascript"></script>
+<script src="https://unpkg.com/js-image-zoom@0.4.1/js-image-zoom.js" type="application/javascript"></script>
+
+<!-- <script src="{% static 'js/script.js' %}" type="text/javascript"></script> -->
+<section class="breadcrumb-option">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="breadcrumb__text">
+                    <h4>Shop</h4>
+                    <div class="breadcrumb__links">
+                        <a href="{% url 'home' %}">Home</a>
+                        <a href="{% url 'store:storehome' %}">Shop</a>
+                        <span>{{single_product.product_name}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section class="section-content padding-y bg">
+    <div class="container">
+
+        <!-- ============================ COMPONENT 1 ================================= -->
+        <div class="card">
+            <div class="row no-gutters">
+                <aside class="col-md-6">
+                    <article class="gallery-wrap">
+                        <div id="img-container" class="mainImage" style="width: 550px">
+                            <img id="lg_img" src="{{single_product.image.url}}" />
+                            <ul class="thumb">
+                                <li>
+                                    <span target="mainImage"><img onclick="fun_img(this.src)"
+                                            src="{{single_product.image.url}}" alt="Product Image"></span>
+                                    {% for i in product_gallery %}
+                                    <span target="mainImage"><img onclick="fun_img(this.src)" src="{{i.image.url}}"
+                                            alt="Product Image"></span>
+                                    {% endfor %}
+                                </li>
+                            </ul>
+                            <div>
+                                <!-- img-big-wrap.// -->
+
+                    </article> <!-- gallery-wrap .end// -->
+
+                </aside>
+
+                <main class="col-md-6 border-left ">
+                    <form action="{% url 'cart:add_cart' single_product.id %}" method="POST">
+                        {% csrf_token %}
+                        <article class="content-body">
+
+                            <h2 class="title">{{single_product.product_name}}</h2>
+
+                            <div class="mb-3  d-inline-block">
+                                <span class="price h4">
+                                    {% if update_price %}
+                                    ₹{{update_price |stringformat:'d'}}
+                                    {% else %}
+                                    ₹{{product_offer |stringformat:'d'}}
+                                    {% endif %}
+                                </span>
+                                <span>
+                                    <strike>
+                                        <p>₹{{single_product.price}} </p>
+                                    </strike>
+                                </span>
+                            </div>
+                            <p class="ml-2 text-danger">category offer: {{ single_product.category.offer}} %off </p>
+                            <p class="ml-2 text-warning">product offer: {{ single_product.offer}} %off </p>
+                            <p>{{single_product.descrbtion}}</p>
+                            <hr>
+                            <div class="row">
+                                <div class="item-option-select">
+                                    <h6>Choose Color</h6>
+                                    <select name="color" class="form-control" id="select_color" required>
+                                        <option value="" disabled selected>Select</option>
+                                        {% for i in single_product.variations.colors%}
+
+                                        <option value="{{i.variation_value | lower }}" {% if selected_color == i.variation_value %} selected
+                                            {% endif %}>{{i.variation_value | capfirst}}
+                                        </option>
+                                        {% endfor %}
+
+                                    </select>
+
+                                </div>
+                            </div> <!-- row.// -->
+                            <div class="row">
+                                <div class="item-option-select">
+                                    <h6>Select Size</h6>
+                                    <select name="size" class="form-control">
+                                        <option value="" disabled selected>Select</option>
+                                        {% for i in single_product.variations.sizes%}
+
+                                        <option value="{{i.variation_value | lower }}">{{i.variation_value | capfirst}}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div> <!-- row.// -->
+                            <hr>
+                            {% if single_product.stock <= 0 %} <h5 class="text-danger">out of stoct</h5>
+                                {% else %}
+                                <button type="submit " class="btn  btn-primary"> <span class="text">Add to cart</span>
+                                    <i class="fa fa-shopping-cart"></i> </button>
+
+                                {% endif %}
+                        </article> <!-- product-info-aside .// -->
+                    </form>
+                    <form action="{% url 'wishlists:add_wishlist' single_product.id %}" method="POST">
+                        {% csrf_token %}
+                        <div class="ml-4">
+                            {% if single_product in wishlist.product %}
+
+                            <button class="btn  btn-success"> <span class="text">Already in wishlist</span> <i
+                                    class="fa fa-heart text-danger"></i> </button>
+
+                            {% else %}
+                            <button type="submit " class="btn  btn-success"> <span class="text">Add to Wish List</span>
+                                <i class="fa fa-heart text-danger"></i> </button>
+                            {% endif %}
+
+                        </div>
+
+
+                    </form>
+                </main>
+                <!-- col.// -->
+            </div> <!-- row.// -->
+        </div> <!-- card.// -->
+        <!-- ============================ COMPONENT 1 END .// ================================= -->
+
+        <br>
+
+        <div class="row">
+            <div class="col-md-9">
+
+                <header class="section-heading">
+                    <h3>Customer Reviews </h3>
+
+                </header>
+
+                <article class="box mb-3">
+                    <div class="icontext w-100">
+                        <img src="{% static './images/avatars/avatar1.jpg' %}" class="img-xs icon rounded-circle">
+                        <div class="text">
+                            <span class="date text-muted float-md-right">24.04.2020 </span>
+                            <h6 class="mb-1">Mike John </h6>
+
+                        </div>
+                    </div> <!-- icontext.// -->
+                    <div class="mt-3">
+                        <p>
+                            Dummy comment Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                            tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                            quis nostrud exercitation ullamco laboris nisi ut aliquip
+                        </p>
+                    </div>
+                </article>
+
+
+
+            </div> <!-- col.// -->
+        </div> <!-- row.// -->
+
+
+    </div> <!-- container .//  -->
+</section>
+<script>
+    var options = {
+        width: 590,
+        zoomWidth: 500,
+        offset: { vertical: 0, horizontal: 10 }
+    };
+    new ImageZoom(document.getElementById("img-container"), options);
+
+    function fun_img(image) {
+        document.getElementById('lg_img').src = image
+    }
+
+</script>
+
+<script>
+    $('#select_color').on('focus', function () {
+        localStorage.setItem("data", this.value);
+    }).change(function (e) {
+        e.preventDefault();
+        var text = $('#select_color').find(":selected").text();
+        var value = $('#select_color').find(":selected").val();
+        previous = this.value;
+        window.location.href = window.location.pathname + `?color=${value}`
+    });
+    document.getElementById("#select_color").innerHTML = localStorage.getItem("data");
+
+</script>
+
+{% endblock content %}

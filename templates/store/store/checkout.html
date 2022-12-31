@@ -1,0 +1,346 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+{% block css %}
+<link href="{% static 'css/ui.css' %}" rel="stylesheet" type="text/css" />
+<style>
+    form .error {
+        color: #ff0001;
+    }
+</style>
+{% endblock css %}
+
+<section class="breadcrumb-option">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="breadcrumb__text">
+					<h4>Shop</h4>
+					<div class="breadcrumb__links">
+						<a href="{% url 'home' %}">Home</a>
+						<span>Checkout</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<section class="section-content padding-y">
+    <div class="container">
+
+        <!-- ============================ COMPONENT 1 ================================= -->
+        <div class="row">
+            <aside class="col-md-6 col-12">
+                <div class="card">
+                    {% for i in user %}
+
+                    <div class="card-body">
+
+                        <input required type="radio" onclick="addressSelector('{{i.user.first_name }} ','{{i.user.last_name }}','{{i.user.phone_number}}', '{{i.user.email }}','{{i.address_line_1}}','{{i.address_line_2}}' ,'{{i.city}}' ,'{{i.state}}' ,'{{i.country}}'
+                        ,'{{i.pincode}}')" class="float-right" name="address" id="">
+                        <label class="form-group float-left " for="">{{i.user.first_name }} {{i.user.last_name }} <br>
+                            {{i.address_line_1}} <br> {{i.address_line_2}} <br> {{i.city}} ,{{i.state}} ,{{i.country}}
+                            <br>
+                            {{i.pincode}}, {{i.user.phone_number}}</label><br>
+
+                        <!-- <a href="{% url 'accounts:add_address' %}" class="btn btn-primary p-3 mb-5  ">Add Address</a> -->
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <hr>
+                <form action="{% url 'orders:placeorder'%}" method="POST">{% csrf_token %}
+                    <h5 class="text-center text-capitalize mb-3">Billing Address </h5>
+                    <div class="form-row">
+                        <div class="form-group col-md-6 ">
+                            <label>First Name</label>
+                            <input type="text" name="first_name" maxlength="50" class="form-control" required=""
+                                id="id_first_name" placeholder="First Name" value="{{user.user.first_name}}">
+                        </div>
+                        <div class="form-group col-md-6 ">
+                            <label>Last Name</label>
+                            <input type="text" name="last_name" maxlength="50" class="form-control" required=""
+                                id="id_last_name" placeholder="Last Name" value="{{user.user.last_name}}">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6 ">
+                            <label>Phone Number</label>
+                            <input type="text" name="phone_number" maxlength="10" class="form-control" required=""
+                                id="id_phone_number" placeholder="1234567890" value="{{user.user.phone_number}}">
+                        </div>
+                        <div class="form-group col-md-6 ">
+                            <label>Email Address</label>
+                            <input type="email" name="email" maxlength="10" class="form-control" required id="id_email"
+                                placeholder="abc@gmail.com" value="{{user.user.email}}">
+                        </div>
+
+                    </div>
+                    <div class="form-group">
+                        <label>Address Line 1</label>
+                        <input type="text" name="address_line_1" maxlength="100" class="form-control"
+                            id="id_address_line_1" placeholder="address line_1" value="{{user.address_line_1}}">
+                    </div>
+                    <div class="form-group">
+                        <label>Address Line 2</label>
+                        <input type="text" name="address_line_2" maxlength="100" class="form-control"
+                            id="id_address_line_2" placeholder="address line 2" value="{{user.address_line_2}}">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-3 ">
+                            <label>City</label>
+                            <input type="text" name="city" maxlength="20" class="form-control" id="id_city"
+                                placeholder="City" value="{{user.city}}">
+                        </div>
+                        <div class="form-group col-md-3 ">
+                            <label>State</label>
+                            <input type="text" name="state" maxlength="20" class="form-control" id="id_state"
+                                placeholder="State" value="{{user.state}}">
+                        </div>
+                        <div class="form-group col-md-3 ">
+                            <label>Country</label>
+                            <input type="text" name="country" maxlength="20" class="form-control" id="id_country"
+                                placeholder="Country" value="{{user.country}}">
+                        </div>
+                        <div class="form-group col-md-3 ">
+                            <label>Pincode</label>
+                            <input type="text" name="pincode" maxlength="20" class="form-control" id="id_pincode"
+                                placeholder="Pincode" value="{{user.pincode}}">
+                        </div> -->
+                    </div>
+            </aside>
+            <aside class="col-md-6 col-12">
+                <div class="card d-flex">
+                    <div class="card-body">
+                        <table class="table table-borderless table-shopping-cart mb-5">
+                            <thead class="text-muted">
+                                <tr class="small text-uppercase">
+                                    <th scope="col-4">Product</th>
+                                    <th scope="col-4">Quantity</th>
+                                    <th scope="col-4">Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                <tr>
+                                    {% for cart_item in cart_items %}
+                                    <td class="ms-3">
+                                        <figure class="itemside align-items-center">
+                                            <div class="aside"><img src="{{ cart_item.product.image.url }}"
+                                                    class="img-sm"></div>
+                                            <figcaption class="info">
+                                                <a href="{{cart_item.product.get_url}}" class="title text-dark">
+                                                    {{cart_item.product.product_name | slice:"10"}}</a>
+
+                                                <p class="text-muted small">{% if cart_item.variations.all %}
+                                                    {% for item in cart_item.variations.all %}
+                                                    {{ item.variation_category| capfirst }} :
+                                                    {{ item.variation_value |capfirst }} <br>
+                                                    {% endfor %}
+                                                    {% endif %}</p>
+                                            </figcaption>
+                                        </figure>
+
+                                    </td>
+                                    <td>
+                                        <!-- col.// -->
+                                        <div class="price-wrap ml-5">
+                                            <var class="price">{{cart_item.quantity}}</var>
+
+                                        </div>
+                                        <!-- col.// -->
+                                    </td>
+                                    <td>
+                                        <div class="price-wrap">
+                                            <var class="price">₹{{grand_total|stringformat:'d'}}</var>
+                                            <small class="text-muted"> ₹{{cart_item.product.price|stringformat:'d'}}
+                                                each
+                                            </small>
+                                        </div> <!-- price-wrap .// -->
+                                    </td>
+
+                                </tr>
+
+                                {% endfor %}
+
+
+                            </tbody>
+                        </table>
+                        {% if request.session.coupon_code %}
+
+                        <label>Coupon-code : </label>
+                        <input type="text" class="form-control coupon col-lg-5" name="code"
+                            value="{{ request.session.coupon_code }}" placeholder="{{ request.session.coupon_code }}" />
+                        <a class="btn btn-info btn-apply coupon mt-2 mb-4" href="{% url 'orders:couponremove' %}">Remove</a>
+                        {% else %}
+
+                        <label>Coupon-code : </label>
+
+                        <input type="text" class="form-control coupon " name="code" />
+                        {% endif %}
+                        {% if not request.session.coupon_code %}
+                        <button type="submit" class="btn btn-primary btn-apply coupon mt-2 mb-4"
+                            name="coupon">Apply</button>
+                        {% endif %}
+                        <input type="hidden" name="payment_mode" value="COD">
+                        <button type="submit" name="submit" class="btn btn-primary btn-block">Place Order </button>
+                        <button type="button" id="rzp-button1"
+                            class="btn btn-success btn-block my-2 paywithrazorpay">Pay with Razorpay</button>
+                        <div id="paypal-button-container" class="mt-2"></div>
+                        <a href="{% url 'store:storehome' %}" class="btn btn-light btn-block">Continue Shopping</a>
+                    </div> <!-- card-body.// -->
+                </div>
+            </aside>
+        </div>
+
+    </div> <!-- row.// -->
+
+    <!-- ============================ COMPONENT 1 END .// ================================= -->
+
+    </div> <!-- container .//  -->
+</section>
+
+{% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.min.js"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function addressSelector(first_name, last_name, phone_number, email, address_line_1, address_line_2, city, state, country, pincode) {
+        document.getElementById('id_first_name').value = first_name
+        document.getElementById('id_last_name').value = last_name
+        document.getElementById('id_phone_number').value = phone_number
+        document.getElementById('id_email').value = email
+        document.getElementById('id_address_line_1').value = address_line_1
+        document.getElementById('id_address_line_2').value = address_line_2
+        document.getElementById('id_city').value = city
+        document.getElementById('id_state').value = state
+        document.getElementById('id_country').value = country
+        document.getElementById('id_pincode').value = pincode
+    }
+</script>
+
+<script
+    src="https://www.paypal.com/sdk/js?client-id=ARuFLppwh1wuz2QeEZ2c0ZFVenwAuYW9ol0RiWf6dQWyiCbXtQu5EYjxDdnommRpgMWxZX4iL6F1stRb&currency=USD&intent=capture&enable-funding=venmo"
+    data-sdk-integration-source="integrationbuilder"></script>
+<script>
+    const paypalButtonsComponent = paypal.Buttons({
+        // optional styling for buttons
+        // https://developer.paypal.com/docs/checkout/standard/customize/buttons-style-guide/
+        style: {
+            color: "gold",
+            shape: "rect",
+            layout: "vertical"
+        },
+
+        // set up the transaction
+        createOrder: (data, actions) => {
+            // pass in any options from the v2 orders create call:
+            // https://developer.paypal.com/api/orders/v2/#orders-create-request-body
+            const createOrderPayload = {
+                purchase_units: [
+                    {
+                        amount: {
+                            value: "0.01"
+                        }
+                    }
+                ]
+            };
+
+            return actions.order.create(createOrderPayload);
+        },
+        onClick: (data, actions) => {
+            // validations
+            var last_name = $("[name='last_name']").val();
+            var phone = $("[name='phone_number']").val();
+            var email = $("[name='email']").val();
+            var address_line_1 = $("[name='address_line_1']").val();
+            var address_line_2 = $("[name='address_line_2']").val();
+            var city = $("[name='city']").val();
+            var state = $("[name='state']").val();
+            var country = $("[name='country']").val();
+            var pincode = $("[name='pincode']").val();
+            var fname = $("[name='first_name']").val();
+            var token = $("[name='csrfmiddlewaretoken']").val();
+            if (fname == "" || last_name == "" || phone == "" || email == "" || address_line_1 == "" || address_line_2 == "" || city == "" || state == "" || country == "" || pincode == "") {
+                Swal.fire(
+                    'Alert!',
+                    'All fields are mandatory',
+                    'error'
+                )
+                return false
+            } else {
+                return true
+            }
+        },
+
+
+        // finalize the transaction
+        onApprove: (data, actions) => {
+            return actions.order.capture().then(function (orderData) {
+                var last_name = $("[name='last_name']").val();
+                var phone = $("[name='phone_number']").val();
+                var email = $("[name='email']").val();
+                var address_line_1 = $("[name='address_line_1']").val();
+                var address_line_2 = $("[name='address_line_2']").val();
+                var city = $("[name='city']").val();
+                var state = $("[name='state']").val();
+                var country = $("[name='country']").val();
+                var pincode = $("[name='pincode']").val();
+                var fname = $("[name='first_name']").val();
+                var token = $("[name='csrfmiddlewaretoken']").val();
+                data = {
+                    'first_name': fname,
+                    "last_name": last_name,
+                    "phone_number": phone,
+                    "email": email,
+                    "address_line_1": address_line_1,
+                    "address_line_2": address_line_2,
+                    "city": city,
+                    "state": state,
+                    "country": country,
+                    "pincode": pincode,
+                    "fname": fname,
+                    "payment_mode": "paid by PayPal",
+                    "payment_id": orderData.id,
+                    "csrfmiddlewaretoken": token
+                }
+                $.ajax(
+                    {
+                        method: "POST",
+                        url: "/orders/place-order",
+                        data: data,
+                        success: function (responsec) {
+                            alert('hello aseanto pleaskdflksdjfgljsdfljd')
+                            Swal.fire(
+                                'Congratulations!',
+                                'Thank you to buying from us',
+                                'success'
+                            )
+                            setTimeout(() => {
+                                window.location.href = '/orders/my-order';
+                            }, 3000)
+                        }
+                    });
+            })
+        },
+
+        // handle unrecoverable errors
+        onError: (err) => {
+            console.error('An error prevented the buyer from checking out with PayPal');
+        }
+    });
+
+    paypalButtonsComponent
+        .render("#paypal-button-container")
+        .catch((err) => {
+            console.error('PayPal Buttons failed to render');
+        });
+</script>
+
+{% endblock scripts %}
+
+{% endblock content %}

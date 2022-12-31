@@ -1,0 +1,275 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+
+
+
+<section class="breadcrumb-option">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="breadcrumb__text">
+					<h4>Shop</h4>
+					<div class="breadcrumb__links">
+						<a href="{% url 'home' %}">Home</a>
+						<span>Shop</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<section class="shop spad">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-3">
+				<div class="shop__sidebar">
+					<div class="shop__sidebar__search">
+
+						<form action="{% url 'store:search' %}" class="search" method="GET">
+
+							<input type="text" class="form-control"  placeholder="Search" id="tags"
+								name="keyword">
+							<button type="submit"><span class="icon_search"></span></button>
+							<!-- <button class="btn btn-dark" type="submit">
+								<i class="fa fa-search"></i>
+							</button> -->
+
+						</form>
+
+					</div>
+					<div class="shop__sidebar__accordion">
+						<div class="accordion" id="accordionExample">
+							<div class="card">
+								<div class="card-heading">
+									<a data-toggle="collapse" data-target="#collapseOne">Categories</a>
+								</div>
+								<div id="collapseOne" class="collapse show" data-parent="#accordionExample">
+									<div class="card-body">
+										<div class="shop__sidebar__categories">
+											<ul class="nice-scroll">
+												{% for category in links %}
+												<li class="dropdown-item"><a href="{{ category.get_url }}">
+														{{category.category_name }} </a></li>
+												{% endfor %}
+											</ul>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="card">
+								<div class="card-heading">
+									<a data-toggle="collapse" data-target="#collapseFour">Size</a>
+								</div>
+								<div id="collapseFour" class="collapse show" data-parent="#accordionExample">
+									<div class="card-body">
+										<div class="shop__sidebar__size">
+											{% for size in links_Size %}
+											<label>
+												<a href="{{ size.get_url }}">{{ size.name }} </a>
+											</label>
+											{% endfor %}
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="card">
+								<div class="card-heading">
+									<a data-toggle="collapse" data-target="#collapseFive">Colors</a>
+								</div>
+								<div id="collapseFive" class="collapse show" data-parent="#accordionExample">
+									<div class="card-body">
+										<div class="shop__sidebar__color">
+											{% for color in links_Color %}
+											<a href="{{ color.get_url }}"><label for="sp-1"
+													style="background:{{color.name}}">
+												</label></a>
+											{% endfor %}
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="card">
+								<div class="card-heading">
+									<a data-toggle="collapse" data-target="#collapseSix">Tags</a>
+								</div>
+								<div id="collapseSix" class="collapse show" data-parent="#accordionExample">
+									<div class="card-body">
+										<div class="shop__sidebar__tags">
+											<a href="#">Product</a>
+											<a href="#">Bags</a>
+											<a href="#">Shoes</a>
+											<a href="#">Fashio</a>
+											<a href="#">Clothing</a>
+											<a href="#">Hats</a>
+											<a href="#">Accessories</a>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-9">
+				<div class="shop__product__option">
+					<div class="row">
+						<div class="col-lg-6 col-md-6 col-sm-6">
+							<div class="shop__product__option__sort">
+								<!-- For making sorting functionality -->
+								<select name="sort" id="sort-list" onchange="location = finalurl();"
+									style="margin-left: auto;">
+									<option value="" id="placeholder" disabled selected hidden>Sort</option>
+									<option id="price" value="price">Price: Low To High</option>
+									<option id="-price" value="-price">Price: High To Low</option>
+									<option id="product_name" value="product_name">Product Name</option>
+									<option id="-created_date" value="-created_date">What's New</option>
+								</select>
+							</div>
+						</div>
+						<div class="col-lg-6 col-md-6 col-sm-6">
+							<div class="shop__product__option__right">
+								<!-- For filtering based on Price -->
+								<select name="price" id="price-list" onchange="location = finalurl2();"
+									style="margin-left: auto;">
+									<option value="" id="price-placeholder" disabled selected hidden>Price</option>
+									<option id="pr500" value="500">less than 500</option>
+									<option id="pr1000" value="1000">less than 1000</option>
+									<option id="pr2000" value="2000">less than 2000</option>
+									<option id="pr10000" value="10000">less than 10000</option>
+								</select>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					{% if products %}
+					{% for product in products %}
+					<div class="col-lg-4 col-md-6 col-sm-6">
+						<div class="product__item m-1">
+							<div class="product__item__pic set-bg sale" data-setbg="{{ product.image.url }}"
+								onclick="imagfun()" style="border:solid 1px #D5DBDB;">
+
+								<ul class="product__hover">
+									<li><a href="#"><img src="{% static 'store/img/icon/heart.png'%}" alt=""></a>
+									</li>
+									<li><a href="#"><img src="{% static 'store/img/icon/compare.png'%}" alt="">
+											<span>Compare</span></a></li>
+									<li><a href="{% url 'store:product_detail' product.category.slug product.slug  %}"><img
+												src="{% static 'store/img/icon/search.png'%}" alt=""></a>
+									</li>
+								</ul>
+
+							</div>
+							<div class="product__item__text">
+								<h6>{{ product.product_name }}</h6>
+								<a href="#" class="add-cart">+ Add To Cart</a>
+								<h5>₹ {{ product.offer_product |stringformat:'d' }}</h5>
+								<span class="d-flex">
+									<strike class="d-flex">
+										<p>₹{{product.price}} </p>
+									</strike>
+									<span class="ml-2 text-danger"> {{product.category.offer}} %off</span>
+								</span>
+							</div>
+						</div>
+					</div>
+					{% endfor %}
+					{% else %}
+					<div>
+						<h2>No result found. Please try again.</h2>
+					</div>
+					{% endif %}
+				</div>
+				<div class="row">
+					<div class="col-lg-12">
+						<nav class="mt-4" aria-label="Page navigation sample">
+							{% if products.has_other_pages %}
+							<ul class="pagination">
+								{% if products.has_previous %}
+								<li class="page-item"><a class="page-link"
+										href="?page={{products.previous_page_number}}">Previous</a></li>
+								{% else %}
+								<li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
+								{% endif %}
+
+								{% for i in products.paginator.page_range %}
+								{% if products.number == i %}
+								<li class="page-item active"><a class="page-link" href="#">{{i}}</a></li>
+								{% else %}
+								<li class="page-item"><a class="page-link" href="?page={{i}}">{{i}}</a></li>
+								{% endif %}
+								{% endfor %}
+
+								{% if products.has_next %}
+								<li class="page-item"><a class="page-link"
+										href="?page={{products.next_page_number}}">Next</a>
+								</li>
+								{% else %}
+								<li class="page-item disabled"><a class="page-link" href="#">Next</a></li>
+								{% endif %}
+							</ul>
+							{% endif %}
+						</nav>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+
+<script>
+
+	// for getting the sorting status to be displayed in sorting dropdown placeholder
+	function get(name) {
+
+		if (name = (new RegExp('[?&]' + encodeURIComponent(name) + '=([^&]*)')).exec(location.search))  //location.search give query sling part
+
+			return decodeURIComponent(name[1]);
+	}
+
+	if (get('ordering'))
+		document.getElementById('placeholder').innerHTML = "Sort: " + document.getElementById(get('ordering')).innerHTML;
+
+	if (get('price'))
+		document.getElementById('price-placeholder').innerHTML = "Price: " + document.getElementById('pr' + get('price')).innerHTML;
+
+	// for getting url after applying ordering
+	function finalurl() {
+		var url = new URL(window.location.href);
+		var search_params = url.searchParams;
+		search_params.set('ordering', document.getElementById("sort-list").value);
+		url.search = search_params.toString();
+		var new_url = url.toString();
+		return new_url
+	}
+
+	// for getting url after applying price filtering
+	function finalurl2() {
+		var url = new URL(window.location.href);
+		var search_params = url.searchParams;
+		search_params.set('price', document.getElementById("price-list").value);
+		url.search = search_params.toString();
+		var new_url = url.toString();
+		return new_url
+	}
+
+</script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+<script>
+	$(function () {
+
+		$("#tags").autocomplete({
+			source: '{% url 'store:suggestionApi' %}',
+		});
+	});
+</script>
+
+{% endblock %}

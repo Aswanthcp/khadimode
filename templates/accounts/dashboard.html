@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+
+{% block content %}
+{% block css %}
+<link href="{% static 'css/ui.css' %}" rel="stylesheet" type="text/css" />
+{% endblock css %}
+
+
+
+{% include "includes/alerts.html" %}
+<section class="section-conten padding-y bg">
+
+    <div class="container">
+        <div class="row">
+            {% include "includes/sidebar.html" %}
+        <main class="col-md-9">
+            <article class="card">
+            <header class="card-header">
+                <strong class="d-inline-block mr-3">Logged In as :</strong>
+                <span class="text-success font-weight-bold"> {{ user.first_name }} {{user.last_name}} </span>
+            </header>
+            <div class="card-body">
+                <div class="row">
+                 <div class="col-md-6">
+                    <div class="card" style="text-align:center;">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Orders</h5>
+                            <h4>{{orders_count}}</h4>
+                            <a href="{% url 'orders:my_orders' %}">View Orders</a>
+                        </div>
+                    </div>
+                 </div>
+                 <div class="col-md-6">
+                    <div class="card " style="text-align:center;">
+                        <div class="card-body">
+                            <p class=" mt-2 mb-0  text-info">{{ user.email }}</p>
+                            <p class="text-info">{{user.phone_number}}</p>
+                        </div>
+                    </div>
+                 </div>
+                </div>
+            </div> <!-- card-body .// -->
+            
+
+
+            </article> <!-- order-group.// --> 
+        </main>
+    </div> <!-- row.// -->
+    </div>
+    
+    
+    </section>
+
+{% endblock content %}
+
+
+
