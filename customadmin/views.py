@@ -446,21 +446,13 @@ def manage_order(request):
 
 @user_passes_test(lambda u: u in a, login_url='customadmin:admin_login')
 def edit_order(request, id):
-    order = Order.objects.get(id=id)
-    form = OrderForm(instance=order)
-
-    if request.method == 'POST':
-        form = OrderForm(request.POST, instance=order)
-
-        if form.is_valid():
-            form.save()
-            return redirect('customadmin:manage_order')
-
-    context = {
-        'form': form,
-        'order': order
-    }
-    return render(request, 'admins/edit_order.html', context)
+    if request.method == "POST":
+        order = Order.objects.get(id=id)
+        select_status = request.POST.get('select_status')
+        if order:
+            order.status = select_status
+            order.save()
+    return redirect('customadmin:manage_order')
 
 # Discount coupons
 
@@ -584,6 +576,10 @@ def sales_report(request):
         year_sale.append({"name": months_available[months], 'value': l})
         suby = suby - datetime.timedelta(days=30)
         months -= 1
+        
+    
+    
+    
     yearly_sale = list(reversed(year_sale))
 
     weekly_sales = list(reversed(week_sale))
@@ -592,6 +588,7 @@ def sales_report(request):
         'yearly': yearly,
         'monthly_sales': monthly_sales,
         'weekly_sales': weekly_sales,
+        'yearly_sale':yearly_sale,
         'customer_count': customer_count,
         'item_count': item_count,
         'product': product,

@@ -62,7 +62,7 @@
               labels: [{% for i in order %} '{{i.title}}', {% endfor %}],
           datasets: [{
             label: 'Number of Products',
-            data: [{% for i in product %} {{ i.price }}, {% endfor %}],
+            data: [{% for i in order %} {{ i.product.price }}, {% endfor %}],
             backgroundColor: [
               'rgba(255, 99, 132, 1)',
               'rgba(54, 162, 235, 1)',

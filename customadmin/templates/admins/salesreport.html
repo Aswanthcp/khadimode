@@ -46,32 +46,30 @@
         </div>
       </div>
     </div>
+    <hr>
     <div class="row">
+      <div class="col">
+        <select id="report_select">
+          <option value="monthly">Month</option>
+          <option value="weekly">Week</option>
+          <option value="day">Daily</option>
+        </select>
 
-      <div class="col-sm-6">
+      </div>
+
+      <div class="col-sm-12 group_report" id="monthly">
         <div id="container" style="width: 100%;">
-          <canvas id="myChart1" width="400" height="300"></canvas>
-        </div>
-
-
-        <script>
-          var ctx = document.getElementById('myChart1').getContext('2d');
-          var myChart1 = new Chart(ctx, {
-            type: 'bar',
-            data: {
-              labels: [{% for i in monthly_sales %} '{{i.name}}', {% endfor %}],
-          datasets: [{
-            label: 'Monthly Sales',
-            data: [{% for i in monthly_sales %} {{ i.value }}, {% endfor %}],
-            backgroundColor: [
-              'rgba(255, 99, 132, 1)',
-              'rgba(54, 162, 235, 1)',
-              'rgba(255, 206, 86, 1)',
-              'rgba(75, 192, 192, 1)',
-              'rgba(153, 102, 255, 1)',
-              'rgba(255, 159, 64, 1)'
-            ],
-              borderColor: [
+          <canvas id="myChart1"></canvas>
+          <script>
+            var ctx = document.getElementById('myChart1').getContext('2d');
+            var myChart1 = new Chart(ctx, {
+              type: 'bar',
+              data: {
+                labels: [{% for i in yearly_sale %} '{{i.name}}', {% endfor %}],
+            datasets: [{
+              label: 'Monthly Sales',
+              data: [{% for i in yearly_sale %} {{ i.value }}, {% endfor %}],
+              backgroundColor: [
                 'rgba(255, 99, 132, 1)',
                 'rgba(54, 162, 235, 1)',
                 'rgba(255, 206, 86, 1)',
@@ -79,144 +77,370 @@
                 'rgba(153, 102, 255, 1)',
                 'rgba(255, 159, 64, 1)'
               ],
-                borderWidth: 1
+                borderColor: [
+                  'rgba(255, 99, 132, 1)',
+                  'rgba(54, 162, 235, 1)',
+                  'rgba(255, 206, 86, 1)',
+                  'rgba(75, 192, 192, 1)',
+                  'rgba(153, 102, 255, 1)',
+                  'rgba(255, 159, 64, 1)'
+                ],
+                  borderWidth: 1
               }]
                   },
-          options: {
-            scales: {
-              yAxes: [{
-                ticks: {
-                  beginAtZero: true
-                }
-              }]
+            options: {
+              scales: {
+                yAxes: [{
+                  ticks: {
+                    beginAtZero: true
+                  }
+                }]
+              }
             }
-          }
               });
-        </script>
-      </div>
-
-      <div class="col-sm-6">
-        <div id="container" style="width: 100%;">
-
-          <canvas id="myChart2" width="400" height="300"></canvas>
+          </script>
         </div>
 
-        <script>
-          var ctx = document.getElementById('myChart2').getContext('2d');
-          var myChart1 = new Chart(ctx, {
-            type: 'line',
-            data: {
-              labels: [{% for i in weekly_sales %} '{{i.name}}', {% endfor %}],
-          datasets: [{
-            label: 'weekly_sales',
-            data: [{% for i in weekly_sales %} {{ i.value }}, {% endfor %}],
-            backgroundColor: [
-              'rgba(255, 99, 132, 1)',
 
-            ],
-              borderColor: [
-                'rgba(255, 99, 132, 1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)',
-                'rgba(255, 159, 64, 1)'
-              ],
-                borderWidth: 1
-              }]
-                  },
-          options: {
-            scales: {
-              yAxes: [{
-                ticks: {
-                  beginAtZero: true
-                }
-              }]
-            }
-          }
-              });
-        </script>
-      </div>
-
-      <div class="col-lg-12 grid-margin stretch-card">
-        <div class="card">
-          <div class="card-body">
-            <h4 class="card-title">Transactions</h4>
-            <!-- <p class="card-description">
+        <br>
+        <div class="col-lg-12 grid-margin stretch-card">
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title">Transactions</h4>
+              <!-- <p class="card-description">
                     Add class <code>.table-striped</code>
                   </p> -->
-            <div class="table-responsive">
+              <div class="table-responsive">
 
+              </div>
+
+              <table class="table table-striped" id="table">
+                <thead>
+                  <tr>
+                    <th>
+                      User
+                    </th>
+                    <th>
+                      Payment Id
+                    </th>
+
+
+                    <th>
+                      Product
+                    </th>
+                    <th>
+                      Date
+                    </th>
+                    <th>
+                      Amount Paid
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+
+                  {% for x in order %}
+                  <tr>
+                    <td class="py-1">
+                      {{ x.order.user}}
+                    </td>
+                    <td>
+                      {% if x.order.payment_id %}
+                      {{ x.order.payment_id }}
+                      {% else %}
+                      Not Paid
+                      {% endif %}
+
+                    <td>
+                      {{ x.product.product_name|slice:'20' }}
+                    </td>
+                    <td>
+                      {{ x.created_at }}
+                    </td>
+                    <td>
+                      {% if x.order.payment_id %}
+                      {{ x.order.total_price }}
+                      {% else %}
+                      Pending
+                      {% endif %}
+                    </td>
+                  </tr>
+                  {% endfor %}
+
+                </tbody>
+                <tfoot>
+                  <th> User</th>
+                  <th> Payment</th>
+                  <th> Product</th>
+                  <th>by month and year</th>
+                  <th>Amount</th>
+                </tfoot>
+              </table>
             </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-12 group_report" id="weekly">
+        <div id="container" style="width: 100%;">
+          <canvas id="myChart2"></canvas>
+          <script>
+            var ctx = document.getElementById('myChart2').getContext('2d');
+            var myChart1 = new Chart(ctx, {
+              type: 'bar',
+              data: {
+                labels: [{% for i in monthly_sales %} '{{i.name}}', {% endfor %}],
+            datasets: [{
+              label: 'Weekly Sales',
+              data: [{% for i in monthly_sales %} {{ i.value }}, {% endfor %}],
+              backgroundColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)'
+              ],
+                borderColor: [
+                  'rgba(255, 99, 132, 1)',
+                  'rgba(54, 162, 235, 1)',
+                  'rgba(255, 206, 86, 1)',
+                  'rgba(75, 192, 192, 1)',
+                  'rgba(153, 102, 255, 1)',
+                  'rgba(255, 159, 64, 1)'
+                ],
+                  borderWidth: 1
+              }]
+                  },
+            options: {
+              scales: {
+                yAxes: [{
+                  ticks: {
+                    beginAtZero: true
+                  }
+                }]
+              }
+            }
+              });
+          </script>
+        </div>
 
-            <table class="table table-striped" id="table">
-              <thead>
-                <tr>
-                  <th>
-                    User
-                  </th>
-                  <th>
-                    Payment Id
-                  </th>
+
+        <br>
+        <div class="col-lg-12 grid-margin stretch-card">
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title">Transactions</h4>
+              <!-- <p class="card-description">
+                    Add class <code>.table-striped</code>
+                  </p> -->
+              <div class="table-responsive">
+
+              </div>
+
+              <table class="table table-striped" id="table">
+                <thead>
+                  <tr>
+                    <th>
+                      User
+                    </th>
+                    <th>
+                      Payment Id
+                    </th>
 
 
-                  <th>
-                    Product
-                  </th>
-                  <th>
-                    Date
-                  </th>
-                  <th>
-                    Amount Paid
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
+                    <th>
+                      Product
+                    </th>
+                    <th>
+                      Date
+                    </th>
+                    <th>
+                      Amount Paid
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
 
-                {% for x in order %}
-                <tr>
-                  <td class="py-1">
-                    {{ x.user.email }}
-                  </td>
-                  <td>
-                    {% if x.payment.payment_id %}
-                    {{ x.payment.payment_id }}
-                    {% else %}
-                    Not Paid
-                    {% endif %}
+                  {% for x in order %}
+                  <tr>
+                    <td class="py-1">
+                      {{ x.order.user}}
+                    </td>
+                    <td>
+                      {% if x.order.payment_id %}
+                      {{ x.order.payment_id }}
+                      {% else %}
+                      Not Paid
+                      {% endif %}
 
-                  <td>
-                    {{ x.product }}
-                  </td>
-                  <td>
-                    {{ x.created_at }}
-                  </td>
-                  <td>
-                    {% if x.payment.payment_id %}
-                    {{ x.payment.amount_paid }}
-                    {% else %}
-                    Pending
-                    {% endif %}
-                  </td>
-                </tr>
-                {% endfor %}
+                    <td>
+                      {{ x.product.product_name|slice:'20' }}
+                    </td>
+                    <td>
+                      {{ x.created_at }}
+                    </td>
+                    <td>
+                      {% if x.order.payment_id %}
+                      {{ x.order.total_price }}
+                      {% else %}
+                      Pending
+                      {% endif %}
+                    </td>
+                  </tr>
+                  {% endfor %}
 
-              </tbody>
-              <tfoot>
-                <th> User</th>
-                <th> Payment</th>
-                <th> Product</th>
-                <th>by month and year</th>
-                <th>Amount</th>
-              </tfoot>
-            </table>
+                </tbody>
+                <tfoot>
+                  <th> User</th>
+                  <th> Payment</th>
+                  <th> Product</th>
+                  <th>by month and year</th>
+                  <th>Amount</th>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-12 group_report" id="day">
+        <div id="container" style="width: 100%;">
+          <canvas id="myChart3"></canvas>
+          <script>
+            var ctx = document.getElementById('myChart3').getContext('2d');
+            var myChart1 = new Chart(ctx, {
+              type: 'bar',
+              data: {
+                labels: [{% for i in weekly_sales %} '{{i.name}}', {% endfor %}],
+            datasets: [{
+              label: 'Monthly Sales',
+              data: [{% for i in weekly_sales %} {{ i.value }}, {% endfor %}],
+              backgroundColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)'
+              ],
+                borderColor: [
+                  'rgba(255, 99, 132, 1)',
+                  'rgba(54, 162, 235, 1)',
+                  'rgba(255, 206, 86, 1)',
+                  'rgba(75, 192, 192, 1)',
+                  'rgba(153, 102, 255, 1)',
+                  'rgba(255, 159, 64, 1)'
+                ],
+                  borderWidth: 1
+              }]
+                  },
+            options: {
+              scales: {
+                yAxes: [{
+                  ticks: {
+                    beginAtZero: true
+                  }
+                }]
+              }
+            }
+              });
+          </script>
+        </div>
+
+
+        <br>
+        <div class="col-lg-12 grid-margin stretch-card">
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title">Transactions</h4>
+              <!-- <p class="card-description">
+                    Add class <code>.table-striped</code>
+                  </p> -->
+              <div class="table-responsive">
+
+              </div>
+
+              <table class="table table-striped" id="table">
+                <thead>
+                  <tr>
+                    <th>
+                      User
+                    </th>
+                    <th>
+                      Payment Id
+                    </th>
+
+
+                    <th>
+                      Product
+                    </th>
+                    <th>
+                      Date
+                    </th>
+                    <th>
+                      Amount Paid
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+
+                  {% for x in order %}
+                  <tr>
+                    <td class="py-1">
+                      {{ x.order.user}}
+                    </td>
+                    <td>
+                      {% if x.order.payment_id %}
+                      {{ x.order.payment_id }}
+                      {% else %}
+                      Not Paid
+                      {% endif %}
+
+                    <td>
+                      {{ x.product.product_name|slice:'20' }}
+                    </td>
+                    <td>
+                      {{ x.created_at }}
+                    </td>
+                    <td>
+                      {% if x.order.payment_id %}
+                      {{ x.order.total_price }}
+                      {% else %}
+                      Pending
+                      {% endif %}
+                    </td>
+                  </tr>
+                  {% endfor %}
+
+                </tbody>
+                <tfoot>
+                  <th> User</th>
+                  <th> Payment</th>
+                  <th> Product</th>
+                  <th>by month and year</th>
+                  <th>Amount</th>
+                </tfoot>
+              </table>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js">
+    </script>
+
+    <script>
+      $(document).ready(function () {
+        $('.group_report').hide();
+        $('#monthly').show();
+        $('#report_select').change(function (e) {
+          e.preventDefault();
+          $('.group_report').hide();
+          $('#monthly').hide();
+          $('#' + $(this).val()).show();
+
+        });
+      });
+    </script>
 
 
-
-
-  {% endblock %}
+    {% endblock %}
